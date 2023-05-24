@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 )
 
 type BTCPriceResponse struct {
@@ -33,4 +34,15 @@ func extractPrice() (int, error) {
 		return 0, err
 	}
 	return requestRes.Bitcoin.UAH, nil
+}
+
+func RateHandler(writer http.ResponseWriter, request *http.Request) {
+	price, err := extractPrice()
+	if err != nil {
+		fmt.Println("Something wrong when extracting price of BTC", err)
+		writer.WriteHeader(400)
+		return
+	}
+	writer.WriteHeader(200)
+	writer.Write([]byte(strconv.Itoa(price)))
 }
