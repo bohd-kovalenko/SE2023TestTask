@@ -19,7 +19,7 @@ func SaveEmailToFile(email string) error {
 		fmt.Println("Email is not valid ", err)
 		return err
 	}
-	file, err := os.OpenFile(EmailBaseFileName, os.O_APPEND, 2)
+	file, err := os.OpenFile(EmailBaseFileName, os.O_WRONLY|os.O_APPEND, 2)
 	if err != nil {
 		fmt.Println("Error when opening the file", err)
 		return err
@@ -72,6 +72,23 @@ func validateEmail(email string) error {
 	if !isMatch {
 		fmt.Println("Email does not match the pattern ")
 		return ErrInvalidEmail
+	}
+	return nil
+}
+
+func InitRepository() error {
+	_, err := os.Stat(EmailBaseFileName)
+	if err != nil {
+		if os.IsNotExist(err) {
+			_, err = os.Create(EmailBaseFileName)
+			if err != nil {
+				fmt.Println("Error on creating file ", err)
+				return err
+			}
+		} else {
+			fmt.Println("Error, when checking the status of repository file ", err)
+			return err
+		}
 	}
 	return nil
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"SE2023/controllers"
+	"SE2023/repositories"
 	"fmt"
 	"net/http"
 )
@@ -9,6 +10,11 @@ import (
 const ApplicationPort = ":8082"
 
 func main() {
+	err := repositories.InitRepository()
+	if err != nil {
+		fmt.Println("Error, when initializing repository ", err)
+		return
+	}
 	router := routerInit()
 	server := serverInit(router)
 	serverRun(server)
