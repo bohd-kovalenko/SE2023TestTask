@@ -1,48 +1,22 @@
 package controllers
 
 import (
-	"encoding/json"
+	"SE2023/services"
 	"fmt"
-	"io"
 	"net/http"
 	"strconv"
 )
 
-type BTCPriceResponse struct {
-	Bitcoin struct {
-		UAH int `json:"uah"`
-	} `json:"bitcoin"`
-}
+const OkStatus = 200
+const BadRequestStatus = 400
 
-func extractPrice() (int, error) {
-	response, err := http.Get("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=uah")
-	if err != nil {
-		fmt.Println("Error when request executing ", err)
-		return 0, err
-	}
-	defer response.Body.Close()
-
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		fmt.Println("Error when reading the response body ", err)
-		return 0, err
-	}
-	var requestRes BTCPriceResponse
-	err = json.Unmarshal(responseBody, &requestRes)
-	if err != nil {
-		fmt.Println("Error when unmarshalling response body ", err)
-		return 0, err
-	}
-	return requestRes.Bitcoin.UAH, nil
-}
-
-func RateHandler(writer http.ResponseWriter, request *http.Request) {
-	price, err := extractPrice()
+func RateHandler(writer http.ResponseWriter, _ *http.Request) {
+	price, err := services.ExtractPrice()
 	if err != nil {
 		fmt.Println("Something wrong when extracting price of BTC", err)
-		writer.WriteHeader(400)
+		writer.WriteHeader(BadRequestStatus)
 		return
 	}
-	writer.WriteHeader(200)
-	writer.Write([]byte(strconv.Itoa(price)))
+	writer.WriteHeader(OkStatus)
+	_, _ = writer.Write([]byte(strconv.Itoa(price)))
 }
