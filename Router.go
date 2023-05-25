@@ -2,7 +2,7 @@ package main
 
 import "net/http"
 
-const basePath = "/api"
+const BasePath = "/api"
 
 type Route struct {
 	Method  string
@@ -16,7 +16,7 @@ type Router struct {
 func (r *Router) addNewRoute(requestType, path string, handler http.HandlerFunc) {
 	route := Route{
 		requestType,
-		basePath + path,
+		BasePath + path,
 		handler,
 	}
 	r.Routes = append(r.Routes, route)

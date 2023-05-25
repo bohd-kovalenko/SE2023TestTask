@@ -6,6 +6,8 @@ import (
 	"net/http"
 )
 
+const ApplicationPort = ":8082"
+
 func main() {
 	router := routerInit()
 	server := serverInit(router)
@@ -15,12 +17,14 @@ func main() {
 func routerInit() Router {
 	r := Router{}
 	r.addNewRoute("GET", "/rate", controllers.RateHandler)
+	r.addNewRoute("POST", "/subscribe", controllers.SubscriptionNewMailHandler)
+	r.addNewRoute("POST", "/subscription", controllers.MailSendingHandler)
 	return r
 }
 
 func serverInit(router Router) *http.Server {
 	server := &http.Server{
-		Addr:    ":8082",
+		Addr:    ApplicationPort,
 		Handler: &router,
 	}
 	return server
